@@ -7,5 +7,6 @@ namespace TestLogin.Server.CharacterControlService
         Task AddCharactersToBlogPost([FromBody] BlogPostCharacterRequest request);
         Task<List<Character>> GimmeAllTheCharacters();
         Task<ServiceResponse<List<Character>>> GetBlogPostCharacters(int id);
+        Task<ServiceResponse<List<GetBlogPostDto>>> GetBlogPostsByCharacterId(int charid);
     }
 }

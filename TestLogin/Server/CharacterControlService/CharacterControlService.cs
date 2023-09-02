@@ -76,6 +76,27 @@ namespace TestLogin.Server.CharacterControlService
             }    
             return serviceResponse;
         }
+        public async Task<ServiceResponse<List<GetBlogPostDto>>> GetBlogPostsByCharacterId(int charid)
+        {
+            var serviceResponse = new ServiceResponse<List<GetBlogPostDto>>();
+            var blogPost = await _context.BlogPosts
+                .Where(b => b.Characters.Any(c => c.Id == charid) && b.User!.Id == GetUserId())
+                .OrderByDescending(c => c.DateCreated).ToListAsync();
 
+            if (blogPost != null)
+            {
+                serviceResponse.Data = blogPost.Select(c => _mapper.Map<GetBlogPostDto>(c)).ToList();
+                serviceResponse.Success = true;
+                serviceResponse.Message = "Returned Post!";
+            }
+            else
+            {
+                serviceResponse.Data = null;
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Post not found.";
+            }
+
+            return serviceResponse;
+        }
     }
 }

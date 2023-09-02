@@ -1,4 +1,4 @@
-﻿@page "/login"
+﻿@page "/register"
 @using TestLogin.Shared;
 @inherits LayoutComponentBase
 @inject IAuthRepository AuthRepository
@@ -6,14 +6,14 @@
 @inject ILocalStorageService LocalStorage
 @inject NavigationManager NavManager
 
-<h3>Login</h3>
+<h3>Register</h3>
 
 <EditForm Model="user" OnSubmit="HandleLogin">
-    <label for="username">Name</label>
+    <label for="username">Create Name</label>
     <InputText id="username" @bind-Value="username" />
-    <label for="password">Password</label>
+    <label for="password">Create Password</label>
     <InputText id="password" @bind-Value="password" type="password" />
-    <button type="submit" class="btn btn-primary">Login</button>
+    <button type="submit" class="btn btn-primary">Register</button>
 </EditForm>
 
 <p style="color: white;">Don't have an account? <a href="/register" style="color: white;">Register</a></p>
@@ -27,8 +27,9 @@
 
     async Task HandleLogin()
     {
-        var serviceResponse = await AuthRepository.Login(username, password);
-        await LocalStorage.SetItemAsync("token", serviceResponse.Data);
+        var serviceResponse1 = await AuthRepository.Register(username, password);
+        var serviceResponse2 = await AuthRepository.Login(username, password);
+        await LocalStorage.SetItemAsync("token", serviceResponse2.Data);
         await AuthStateProvider.GetAuthenticationStateAsync();
         NavManager.NavigateTo("/");
     }

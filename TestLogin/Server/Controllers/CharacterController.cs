@@ -32,6 +32,13 @@ namespace TestLogin.Server.Controllers
             return Ok(await _characterControlService.GetBlogPostCharacters(id));
         }
 
+        [Authorize]
+        [HttpGet("{charId}")]
+        public async Task<ActionResult<ServiceResponse<List<GetBlogPostDto>>>> GetBlogPostsByCharacterId(int charId)
+        {
+            return Ok(await _characterControlService.GetBlogPostsByCharacterId(charId));
+        }
+
         [HttpPost]
         public async Task AddCharactersToBlogPost([FromBody] BlogPostCharacterRequest request)
         {

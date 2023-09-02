@@ -82,9 +82,19 @@
 
     List<Character> filteredCharacters = new List<Character>();
 
-    private void CharcardClicked(int characterId)
+    public async Task CharcardClicked(int characterId)
     {
+        var response = await CharacterService.GetBlogPostsByCharacterId(characterId);
+        if (response.Success)
+        {
+            blogPosts = response.Data;
+            await LoadCharactersForBlogPosts();
+            StateHasChanged();
+        }
+        else
+        {
 
+        }
     }
 
     private void HandleSearchInput(ChangeEventArgs e)
@@ -104,23 +114,9 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadBlogPosts();
+        await LoadCharactersForBlogPosts();
         AuthRepository.LoggedIn += LoadBlogPosts;
         AuthRepository.LoggedOut += OnLogOut;
-        Characters = await CharacterService.GetAllCharacters();
-        filteredCharacters = Characters;
-        var characterTasks = blogPosts.Select(async post =>
-        {
-            var response = await GetCharactersForPostAsync(post.Id);
-            return response.Data;
-        });
-
-        var charactersResults = await Task.WhenAll(characterTasks);
-
-        for (int i = 0; i < blogPosts.Count; i++)
-        {
-            blogPosts[i].Characters = charactersResults[i];
-        }
-
     }
 
     public async Task<ServiceResponse<List<Character>>> GetCharactersForPostAsync(int id)
@@ -139,6 +135,24 @@
         else
         {
 
+        }
+    }
+
+    private async Task LoadCharactersForBlogPosts()
+    {
+        Characters = await CharacterService.GetAllCharacters();
+        filteredCharacters = Characters;
+        var characterTasks = blogPosts.Select(async post =>
+        {
+            var response = await GetCharactersForPostAsync(post.Id);
+            return response.Data;
+        });
+
+        var charactersResults = await Task.WhenAll(characterTasks);
+
+        for (int i = 0; i < blogPosts.Count; i++)
+        {
+            blogPosts[i].Characters = charactersResults[i];
         }
     }
 

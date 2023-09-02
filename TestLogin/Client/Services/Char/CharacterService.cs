@@ -53,9 +53,31 @@ namespace TestLogin.Client.Services.Char
             }
         }
 
-        public Task<List<BlogPost>> GetBlogPostsByCharacterId(int characterId)
+        public async Task<ServiceResponse<List<GetBlogPostDto>>> GetBlogPostsByCharacterId(int characterId)
         {
-            throw new NotImplementedException();
+            var response = await _http.GetAsync($"api/character/{characterId}");
+            if (response.IsSuccessStatusCode)
+            {
+                var responseData = await response.Content.ReadFromJsonAsync<ServiceResponse<List<GetBlogPostDto>>>();
+                if (responseData == null)
+                {
+                    return new ServiceResponse<List<GetBlogPostDto>>
+                    {
+                        Success = false,
+                        Message = "Response data is null after deserialization."
+                    };
+                }
+                return responseData;
+            }
+            else
+            {
+                // Handle error response
+                return new ServiceResponse<List<GetBlogPostDto>>
+                {
+                    Success = false,
+                    Message = "Failed to retrieve blog posts."
+                };
+            }
         }
     }
 }
