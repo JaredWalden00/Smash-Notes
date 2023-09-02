@@ -1,0 +1,33 @@
+﻿@page "/login"
+@using TestLogin.Shared;
+@inherits LayoutComponentBase
+@inject IAuthRepository AuthRepository
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavManager
+
+<h3>Login</h3>
+
+<EditForm Model="user" OnSubmit="HandleLogin">
+    <label for="username">Name</label>
+    <InputText id="username" @bind-Value="username" />
+    <label for="password">Password</label>
+    <InputText id="password" @bind-Value="password" type="password" />
+    <button type="submit" class="btn btn-primary">Do it!</button>
+</EditForm>
+
+@code {
+    private UserLoginDto user = new UserLoginDto();
+    [Parameter]
+    public string username { get; set; }
+    [Parameter]
+    public string password { get; set; }
+
+    async Task HandleLogin()
+    {
+        var serviceResponse = await AuthRepository.Login(username, password);
+        await LocalStorage.SetItemAsync("token", serviceResponse.Data);
+        await AuthStateProvider.GetAuthenticationStateAsync();
+        NavManager.NavigateTo("/");
+    }
+}

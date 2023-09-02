@@ -1,0 +1,112 @@
+﻿@page "/posts/{stringid}"
+@inject TestLogin.Client.Services.Blog.IBlogService BlogService
+@inject TestLogin.Client.Services.Auth.IAuthRepository AuthRepository
+@inject TestLogin.Client.Services.Char.ICharacterService CharacterService
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavManager
+@using Markdig
+
+<style>
+    .form-group-container {
+        background-color: #f0f0f0; /* Replace with your desired background color */
+        padding: 10px; /* Adjust padding as needed */
+        border-radius: 5px; /* Add border radius if desired */
+    }
+
+</style>
+
+@if (CurrentPost == null)
+{
+    <span>Getting that blog post from the service...</span>
+}
+else
+{
+
+    @if (!EditRecord)
+    {
+        <div class="container-fluid">
+            <div class="row" style="padding: 0 10px; background-color: #DFDFDF;">
+                <div class="col-10">
+                    <h2>@CurrentPost.Title</h2>
+                </div>
+                
+
+            </div>
+
+            <div class="row" style="padding: 0 10px; background-color: #DFDFDF;">
+                <div class="col-12">
+                    <h5>
+                        @if (ExistingCharacters != null)
+                        {
+                            @foreach (var character in ExistingCharacters)
+                            {
+                                @if (ExistingCharacters.IndexOf(character) == ExistingCharacters.Count - 1)
+                                {
+                                    @character.Name
+                                }
+                                else
+                                {
+                                    @($"{character.Name}, ")
+                                }
+                            }
+                        }
+                    </h5>
+
+                </div>
+            </div>
+
+
+
+        <div class="row">
+                <div class="col-12" style="height: 80vh; background-color:white; overflow-y: auto;">
+                    <div style="word-wrap: break-word;">
+                        @((MarkupString)Markdown.ToHtml(@CurrentPost.Content))
+                    </div>
+            </div>
+        </div>
+        </div>
+    }
+}
+
+@code {
+    private GetBlogPostDto CurrentPost = new GetBlogPostDto();
+
+    [Parameter]
+    public string stringid { get; set; }
+
+    private List<Character> Characters = new List<Character>();
+    private List<Character> ExistingCharacters = new List<Character>();
+
+    public bool EditRecord = false;
+    [Parameter]
+    public List<int> NewCharacterIds { get; set; }
+
+    [Parameter]
+    public List<int> ExistingCharacterIds { get; set; }
+
+    string placeholderImage = "https://via.placeholder.com/1060x300";
+
+    protected override async Task OnInitializedAsync()
+    {
+        int Id = int.Parse(stringid);
+        var response = await BlogService.GetBlogPostById(Id); //first error?
+        if (response.Success)
+        {
+            CurrentPost = response.Data;
+        }
+
+        var charlist = await CharacterService.GetBlogPostCharactersById(Id);
+        if (charlist.Success)
+        {
+            ExistingCharacters = charlist.Data;
+        }
+
+        Characters = await CharacterService.GetAllCharacters();
+        ExistingCharacterIds = new List<int>();
+
+        foreach (var character in ExistingCharacters)
+        {
+            ExistingCharacterIds.Add(character.Id);
+        }
+    }
+}

@@ -1,0 +1,77 @@
+﻿.card-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+    .card-link .card {
+        transition: box-shadow 0.3s ease;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.3); /* Modify the values to adjust the box shadow */
+    }
+
+    .card-link:hover .card {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Modify the values to adjust the box shadow */
+        text-decoration: none;
+    }
+
+.charcard {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+    .charcard img {
+        margin-right: 10px;
+    }
+
+    .charcard:hover {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Modify the values to adjust the box shadow */
+        text-decoration: none;
+        background-color: #FFFFFF;
+        transition: 0.2s;
+        cursor: pointer;
+    }
+
+.charcard-text {
+    flex: 1; /* Allow the text to fill the remaining space */
+}
+
+.card-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 6; /* Set the number of lines to display before truncating */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card {
+    height: 200px; /* Set a fixed maximum height for the cards */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.column {
+    overflow-y: auto;
+    max-height: 100%;
+}
+/* Custom CSS to ensure cards remain side by side on all devices */
+.custom-card {
+    width: calc(100% / 6); /* Adjust the width to fit 6 cards in a row */
+    box-sizing: border-box;
+    padding: 5px;
+    display: flex;
+}
+
+.card:hover {
+    border: 2px solid red;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.container-fluid {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    margin-top: 0;
+}
