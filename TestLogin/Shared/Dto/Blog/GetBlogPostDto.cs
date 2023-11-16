@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using TestLogin.Shared;
 
-namespace TestLogin.Shared.Dto
+namespace TestLogin.Shared.Dto.Blog
 {
-    public class UpdateBlogPostDto
+    public class GetBlogPostDto
     {
         public int Id { get; set; }
         public string Url { get; set; } = string.Empty;
@@ -17,5 +13,6 @@ namespace TestLogin.Shared.Dto
         [Required]
         [MaxLength(int.MaxValue)]
         public string Content { get; set; } = string.Empty;
+        public List<Character>? Characters { get; set; }
     }
 }

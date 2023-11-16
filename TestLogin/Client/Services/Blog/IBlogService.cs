@@ -1,10 +1,9 @@
-﻿using TestLogin.Server.Dto;
-using TestLogin.Shared;
-using TestLogin.Shared.Dto;
+﻿using TestLogin.Shared;
+using TestLogin.Shared.Dto.Blog;
 
 namespace TestLogin.Client.Services.Blog
 {
-	public interface IBlogService
+    public interface IBlogService
 	{
         public event Func<Task> BlogPostCreated;
         Task<int> GetStoredBlogPostId();

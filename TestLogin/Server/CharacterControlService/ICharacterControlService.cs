@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TestLogin.Shared.Dto.Blog;
 
 namespace TestLogin.Server.CharacterControlService
 {

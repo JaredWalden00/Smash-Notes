@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TestLogin.Server.Data;
-using TestLogin.Shared.Dto;
+using TestLogin.Shared.Dto.Blog;
 using static System.Net.WebRequestMethods;
 
 namespace TestLogin.Server.BlogControlService
 {
-	public class BlogControlService : IBlogControlService
+    public class BlogControlService : IBlogControlService
 	{
 		private readonly IMapper _mapper;
 		private readonly DataContext _context;
@@ -27,25 +27,25 @@ namespace TestLogin.Server.BlogControlService
 			var serviceResponse = new ServiceResponse<List<GetBlogPostDto>>();
 			var dbBlogPost = await _context.BlogPosts
 			.Where(c => c.User!.Id == GetUserId())
-			.OrderByDescending(c => c.DateCreated).ToListAsync(); //get access to characters table in sql
+			.OrderByDescending(c => c.DateCreated).ToListAsync(); //filters in order of date created
 
-			serviceResponse.Data = dbBlogPost.Select(c => _mapper.Map<GetBlogPostDto>(c)).ToList();
-			return serviceResponse;
+			serviceResponse.Data = dbBlogPost.Select(c => _mapper.Map<GetBlogPostDto>(c)).ToList(); //maps the blogpost type to a list of GetBlogPostDto
+            return serviceResponse;
 		}
 
 		public async Task<ServiceResponse<GetBlogPostDto>> CreateNewBlogPost(AddBlogPostDto request)
 		{
 			var serviceResponse = new ServiceResponse<GetBlogPostDto>();
-			var blogPost = _mapper.Map<BlogPost>(request);
-			blogPost.User = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetUserId());
+			var blogPost = _mapper.Map<BlogPost>(request); //maps AddBlogPostDto to BlogPost
+			blogPost.User = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetUserId()); //sets the user navigation prop to the user with the given Id
 
 			_context.Add(blogPost);
 			await _context.SaveChangesAsync();
 
 			var blogPostRequest = await _context.BlogPosts
-				.FirstOrDefaultAsync(p => p.Url.ToLower().Equals(request.Url.ToLower()) && p.User!.Id == GetUserId());
+				.FirstOrDefaultAsync(p => p.Id.Equals(blogPost.Id) && p.User!.Id == GetUserId()); //queries database for blogpost
 
-			serviceResponse.Data = _mapper.Map<GetBlogPostDto>(blogPostRequest);
+			serviceResponse.Data = _mapper.Map<GetBlogPostDto>(blogPostRequest); //maps BlogPost to GetBlogPostDto
 			serviceResponse.Message = "Blog Post Created.";
 
 			return serviceResponse;

@@ -1,5 +1,5 @@
 ﻿@page "/login"
-@using TestLogin.Shared;
+@using TestLogin.Shared.Dto.User;
 @inherits LayoutComponentBase
 @inject IAuthRepository AuthRepository
 @inject AuthenticationStateProvider AuthStateProvider
@@ -21,9 +21,9 @@
 @code {
     private UserLoginDto user = new UserLoginDto();
     [Parameter]
-    public string username { get; set; }
+    public string username { get; set; } = string.Empty;
     [Parameter]
-    public string password { get; set; }
+    public string password { get; set; } = string.Empty;
 
     async Task HandleLogin()
     {

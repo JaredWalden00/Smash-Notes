@@ -1,9 +1,9 @@
-﻿using TestLogin.Shared.Dto;
+﻿using TestLogin.Shared.Dto.Blog;
 using static System.Net.WebRequestMethods;
 
 namespace TestLogin.Server.BlogControlService
 {
-	public interface IBlogControlService
+    public interface IBlogControlService
 	{
 		Task<ServiceResponse<List<GetBlogPostDto>>> GetAllBlogPost();
 		Task<ServiceResponse<GetBlogPostDto>> CreateNewBlogPost(AddBlogPostDto request);

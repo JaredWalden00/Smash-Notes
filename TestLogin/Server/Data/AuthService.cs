@@ -19,7 +19,7 @@ namespace TestLogin.Server.Data
 		public async Task<ServiceResponse<string>> Login(string username, string password)
 		{
 			var response = new ServiceResponse<string>();
-			var user = await _context.Users.FirstOrDefaultAsync(u => u.Username.ToLower().Equals(username.ToLower()));
+			var user = await _context.Users.FirstOrDefaultAsync(u => u.Username.ToLower().Equals(username.ToLower())); //turn username lowercase
 			if (user is null)
 			{
 				response.Success = false;
@@ -105,12 +105,13 @@ namespace TestLogin.Server.Data
 				Subject = new ClaimsIdentity(claims),
 				Expires = DateTime.Now.AddDays(1),
 				SigningCredentials = creds
-			};
+			}; //a token descripter is created with the aquired claims and signing crenditals, along with expiration which is 1 day right now.
 
 			JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-			SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
 
-			return tokenHandler.WriteToken(token);
+			SecurityToken token = tokenHandler.CreateToken(tokenDescriptor); //a security token key is created which is based on the tokenDescripter.
+
+            return tokenHandler.WriteToken(token); //becomes a string
 		}
 	}
 }

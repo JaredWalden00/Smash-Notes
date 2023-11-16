@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using TestLogin.Shared.Dto;
+using TestLogin.Shared.Dto.Blog;
 
 namespace TestLogin.Server
 {
-	public class AutoMapperProfile : Profile
+    public class AutoMapperProfile : Profile
 	{
 		public AutoMapperProfile()
 		{

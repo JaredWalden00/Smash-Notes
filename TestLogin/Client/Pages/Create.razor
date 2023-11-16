@@ -2,6 +2,7 @@
 @inject TestLogin.Client.Services.Blog.IBlogService BlogService
 @inject TestLogin.Client.Services.Char.ICharacterService CharacterService
 @using TestLogin.Shared
+@using TestLogin.Shared.Dto.Blog
 @inject NavigationManager NavigationManager
 @using Radzen.Blazor.Rendering
 @using System.Text
@@ -80,7 +81,7 @@
     async Task CreateNewBlogPost()
     {
         string dashsepchars = string.Join("-", CharacterIds);
-        newBlogPost.Url = $"{newBlogPost.Title.Replace(" ", "-")}-{dashsepchars}";
+        newBlogPost.Url = $"{newBlogPost.Title.Replace(" ", "-")}-{dashsepchars}"; //set the url to 
         var blogPostResponse = await BlogService.CreateNewBlogPost(newBlogPost);
 
         if (blogPostResponse != null && blogPostResponse.Data != null)
@@ -91,8 +92,6 @@
         }
         else
         {
-            // Handle the case where the blog post creation was not successful
-            // You might want to log an error or display a user-friendly message
         }
     }
 

@@ -5,6 +5,7 @@
 @inject ILocalStorageService LocalStorage
 @inject NavigationManager NavManager
 @using Markdig
+@using TestLogin.Shared.Dto.Blog
 
 <div class="container-fluid">
     <div class="row mb-2" style="height: 90vh;">
@@ -52,6 +53,14 @@
         <div class="col-sm-2" style="height: 100%; background-color:#484848; display: flex; flex-direction: column;">
             <input type="text" @oninput="HandleSearchInput" placeholder="Search characters" style="max-height: 10%">
             <div class="column" style="overflow-y: auto; flex-grow: 1;">
+                <a>
+                    <div class="charcard" style="background-color: #E4E4E4;" @onclick="() => LoadBlogPostsAndCharacters()">
+                        <img src="SmashIcons/General.png" alt="Card Image">
+                        <div class="charcard-text">
+                            All
+                        </div>
+                    </div>
+                </a>
                 @foreach (var character in filteredCharacters)
                 {
                     <a>
@@ -79,27 +88,41 @@
     private List<Character> Characters = new List<Character>();
     private List<Character> postsCharacters = new List<Character>();
     private List<Character> postCharacters = new List<Character>();
+    private List<Character> filteredCharacters = new List<Character>(); //used in HandleSearchInput() and LoadCharactersForBlogPosts()
 
-    List<Character> filteredCharacters = new List<Character>();
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBlogPosts();
+        await LoadCharactersForBlogPosts(); //loads all characters of each blogpost into line 26
+        AuthRepository.LoggedIn += LoadBlogPosts;
+        AuthRepository.LoggedOut += OnLogOut;
+    }
 
     public async Task CharcardClicked(int characterId)
     {
-        var response = await CharacterService.GetBlogPostsByCharacterId(characterId);
+        var response = await CharacterService.GetBlogPostsByCharacterId(characterId); //filters blogpost at line 19
         if (response.Success)
         {
-            blogPosts = response.Data;
-            await LoadCharactersForBlogPosts();
-            StateHasChanged();
+            if (response.Data != null)
+            {
+                blogPosts = response.Data;
+                await LoadCharactersForBlogPosts();
+                StateHasChanged();
+            }
+            else
+            {
+                Console.WriteLine("No character defined.");
+            }
         }
         else
         {
-
+            Console.WriteLine("Error: " + response.Message);
         }
     }
 
     private void HandleSearchInput(ChangeEventArgs e)
     {
-        string searchInput = e.Value.ToString().ToLower();
+        string searchInput = (e.Value?.ToString() ?? "").ToLower(); //if null it becomes null
 
         if (!string.IsNullOrWhiteSpace(searchInput))
         {
@@ -111,15 +134,7 @@
         }
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadBlogPosts();
-        await LoadCharactersForBlogPosts();
-        AuthRepository.LoggedIn += LoadBlogPosts;
-        AuthRepository.LoggedOut += OnLogOut;
-    }
-
-    public async Task<ServiceResponse<List<Character>>> GetCharactersForPostAsync(int id)
+    public async Task<ServiceResponse<List<Character>>> GetCharactersForPost(int id)
     {
         return await CharacterService.GetBlogPostCharactersById(id);
     }
@@ -129,13 +144,43 @@
         var response = await BlogService.GetAllBlogPosts();
         if (response.Success)
         {
-            blogPosts = response.Data;
-            StateHasChanged();
+            if (response.Data != null)
+            {
+                blogPosts = response.Data;
+                StateHasChanged();
+            }
+            else
+            {
+                Console.WriteLine("No blog posts available.");
+            }
         }
         else
         {
-
+            Console.WriteLine("Error: " + response.Message);
         }
+    }
+
+
+    private async Task LoadBlogPostsAndCharacters()
+    {
+        var response = await BlogService.GetAllBlogPosts();
+        if (response.Success)
+        {
+            if (response.Data != null)
+            {
+                blogPosts = response.Data;
+                StateHasChanged();
+            }
+            else
+            {
+                Console.WriteLine("No blog posts available.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Error: " + response.Message);
+        }
+        await LoadCharactersForBlogPosts();
     }
 
     private async Task LoadCharactersForBlogPosts()
@@ -144,15 +189,15 @@
         filteredCharacters = Characters;
         var characterTasks = blogPosts.Select(async post =>
         {
-            var response = await GetCharactersForPostAsync(post.Id);
+            var response = await GetCharactersForPost(post.Id);
             return response.Data;
-        });
+        }); //select asyncrously allows for each blogpost to have it's characters and put into a IEnumerable List of Characters
 
-        var charactersResults = await Task.WhenAll(characterTasks);
+        var charactersResults = await Task.WhenAll(characterTasks); //waits for characterTasks to end before returning a list in order of how they were received
 
         for (int i = 0; i < blogPosts.Count; i++)
         {
-            blogPosts[i].Characters = charactersResults[i];
+            blogPosts[i].Characters = charactersResults[i]; //connects each characterresult to it's respective BlogPost's navigation property Character, used in line 28
         }
     }
 

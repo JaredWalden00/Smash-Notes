@@ -4,6 +4,7 @@ using TestLogin.Server.Data;
 using TestLogin.Shared;
 using Microsoft.EntityFrameworkCore;
 using Azure.Core;
+using TestLogin.Shared.Dto.Blog;
 
 namespace TestLogin.Server.CharacterControlService
 {
@@ -24,21 +25,21 @@ namespace TestLogin.Server.CharacterControlService
         public async Task AddCharactersToBlogPost([FromBody] BlogPostCharacterRequest request)
         {
             var blogPost = await _context.BlogPosts
-                .Include(b => b.Characters) // Include the Characters navigation property
-                .FirstOrDefaultAsync(b => b.Id == request.BlogId && b.User != null && b.User.Id == GetUserId());
+                .Include(b => b.Characters) //include the Characters navigation property
+                .FirstOrDefaultAsync(b => b.Id == request.BlogId && b.User != null && b.User.Id == GetUserId()); //find blogpost
 
             if (blogPost != null)
             {
                 var characters = await _context.Characters
                     .Where(c => request.CharacterIds.Contains(c.Id))
-                    .ToListAsync();
+                    .ToListAsync(); //finds character based on character id's from request
 
                 if (blogPost.Characters == null)
                 {
-                    blogPost.Characters = new List<Character>(); // Initialize if null
+                    blogPost.Characters = new List<Character>(); //initialize if null
                 }
 
-                blogPost.Characters.AddRange(characters);
+                blogPost.Characters.AddRange(characters); //adds characters to blogPosts character navigation prop
 
                 // Save changes to the database
                 await _context.SaveChangesAsync();
@@ -52,14 +53,14 @@ namespace TestLogin.Server.CharacterControlService
                 .Include(c=>c.Name)
                 .ToListAsync();
         }
-        public async Task<ServiceResponse<List<Character>>> GetBlogPostCharacters(int id)
+        public async Task<ServiceResponse<List<Character>>> GetBlogPostCharacters(int BlogId)
         {
             var serviceResponse = new ServiceResponse<List<Character>>();
             var blogPost = await _context.BlogPosts
-                .FirstOrDefaultAsync(b => b.Id == id && b.User!.Id == GetUserId());
+                .FirstOrDefaultAsync(b => b.Id == BlogId && b.User!.Id == GetUserId());
 
             var charactersInBlogPost = _context.Characters
-                .Where(c => c.BlogPosts.Any(bp => bp.Id == blogPost.Id))
+                .Where(c => c.BlogPosts.Any(bp => bp.Id == blogPost.Id)) //checks if any BlogPosts associated with a character have the same Id as the blogPost retrieve
                 .ToList();
 
             if (charactersInBlogPost != null)
@@ -80,12 +81,12 @@ namespace TestLogin.Server.CharacterControlService
         {
             var serviceResponse = new ServiceResponse<List<GetBlogPostDto>>();
             var blogPost = await _context.BlogPosts
-                .Where(b => b.Characters.Any(c => c.Id == charid) && b.User!.Id == GetUserId())
+                .Where(b => b.Characters.Any(c => c.Id == charid) && b.User!.Id == GetUserId()) //checks blogposts for if any of them have characters with Id equal to the charId.
                 .OrderByDescending(c => c.DateCreated).ToListAsync();
 
             if (blogPost != null)
             {
-                serviceResponse.Data = blogPost.Select(c => _mapper.Map<GetBlogPostDto>(c)).ToList();
+                serviceResponse.Data = blogPost.Select(c => _mapper.Map<GetBlogPostDto>(c)).ToList(); //mapped as list of GetBlogPostDtos
                 serviceResponse.Success = true;
                 serviceResponse.Message = "Returned Post!";
             }

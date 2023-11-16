@@ -11,7 +11,7 @@ using TestLogin.Shared;
 using Microsoft.EntityFrameworkCore;
 using static System.Net.WebRequestMethods;
 using Azure.Core;
-using TestLogin.Shared.Dto;
+using TestLogin.Shared.Dto.Blog;
 
 namespace TestLogin.Server.Controllers
 {

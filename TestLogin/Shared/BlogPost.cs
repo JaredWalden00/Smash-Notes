@@ -14,6 +14,7 @@ namespace TestLogin.Shared
 
 		[Required]
 		public string Title { get; set; } = string.Empty;
+
 		[Required]
 		[MaxLength(int.MaxValue)]
 		public string Content { get; set; } = string.Empty;

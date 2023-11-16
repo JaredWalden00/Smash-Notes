@@ -2,9 +2,8 @@
 using System;
 using System.Net.Http;
 using System.Net.Http.Json;
-using TestLogin.Server.Dto;
 using TestLogin.Shared;
-using TestLogin.Shared.Dto;
+using TestLogin.Shared.Dto.Blog;
 
 namespace TestLogin.Client.Services.Blog
 {

@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using TestLogin.Client.Services.Blog;
 using TestLogin.Shared;
+using TestLogin.Shared.Dto.Blog;
 using static System.Net.WebRequestMethods;
 
 namespace TestLogin.Client.Services.Char
@@ -37,7 +38,7 @@ namespace TestLogin.Client.Services.Char
                     return new ServiceResponse<List<Character>>
                     {
                         Success = false,
-                        Message = "Response data is null after deserialization."
+                        Message = "Response data is null."
                     };
                 }
                 return responseData;
@@ -48,7 +49,7 @@ namespace TestLogin.Client.Services.Char
                 return new ServiceResponse<List<Character>>
                 {
                     Success = false,
-                    Message = "Failed to retrieve blog posts."
+                    Message = "Failed to retrieve characters."
                 };
             }
         }
@@ -64,7 +65,7 @@ namespace TestLogin.Client.Services.Char
                     return new ServiceResponse<List<GetBlogPostDto>>
                     {
                         Success = false,
-                        Message = "Response data is null after deserialization."
+                        Message = "Response data is null."
                     };
                 }
                 return responseData;

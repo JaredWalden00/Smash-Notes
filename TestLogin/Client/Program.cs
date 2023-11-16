@@ -1,6 +1,5 @@
 global using TestLogin.Client.Services.Auth;
 global using Microsoft.AspNetCore.Components.Authorization;
-global using TestLogin.Server.Dto;
 global using TestLogin.Shared;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
