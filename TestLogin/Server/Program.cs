@@ -15,8 +15,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSwaggerGen();
+string ConnectionString = @"Server=smashnotes.database.windows.net; Authentication=Active Directory Interactive; Database=testlogin";
 builder.Services.AddDbContext<DataContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(
+        ConnectionString));
 builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen(c => {
 	c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
