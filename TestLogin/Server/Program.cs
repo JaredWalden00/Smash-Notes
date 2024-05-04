@@ -15,10 +15,20 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSwaggerGen();
-string ConnectionString = @"Server=smashnotes.database.windows.net; Authentication=Active Directory Interactive; Database=testlogin";
+var connection = String.Empty;
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddEnvironmentVariables().AddJsonFile("appsettings.Development.json");
+    connection = builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+}
+else
+{
+    connection = Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING");
+}
+
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(
-        ConnectionString));
+        connection));
 builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen(c => {
     c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
