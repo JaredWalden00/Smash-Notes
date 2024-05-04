@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy ASP.Net Core app to Azure Web App - SmashNotes-BWA-Git
+name: Build and deploy ASP.Net Core app to Azure Web App - Smash-Notes
 
 on:
   push:
@@ -40,18 +40,27 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write #This is required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
           name: .net-app
+      
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_F4BC2918A39E4CEA9456B01F4906E63E }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_5A75584512CD462EBE18F2F04A2A0BA0 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_241C40C459DC43C493BF3BA2B61E92B4 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'SmashNotes-BWA-Git'
+          app-name: 'Smash-Notes'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_17E57411AC3B4348AF0938C3575C0D9C }}
           package: .
+          
