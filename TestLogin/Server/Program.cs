@@ -14,6 +14,12 @@ using TestLogin.Server.CharacterControlService;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var logger = LoggerFactory.Create(config =>
+{
+    config.AddConsole();
+}).CreateLogger("Program");
+
+// Add services to the container.
 builder.Services.AddSwaggerGen();
 var connection = String.Empty;
 if (builder.Environment.IsDevelopment())
@@ -25,6 +31,9 @@ else
 {
     connection = Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING");
 }
+
+// Create logger and log the connection string
+logger.LogInformation("Connection string: {ConnectionString}", connection);
 
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(
