@@ -93,7 +93,7 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadBlogPosts();
-        await LoadCharactersForBlogPosts(); //loads all characters of each blogpost into line 26
+/*         await LoadCharactersForBlogPosts(); */ //loads all characters of each blogpost into line 26
         AuthRepository.LoggedIn += LoadBlogPosts;
         AuthRepository.LoggedOut += OnLogOut;
     }

@@ -27,8 +27,10 @@ namespace TestLogin.Client.Services.Blog
 
         public async Task<ServiceResponse<List<GetBlogPostDto>>> GetAllBlogPosts()
         {
-			var response = await _http.GetAsync("api/Blog");
-			if (response.IsSuccessStatusCode)
+            var fart = _http.DefaultRequestHeaders.Authorization;
+            var response = await _http.GetAsync("api/Blog");
+            
+            if (response.IsSuccessStatusCode)
 			{
 				var responseData = await response.Content.ReadFromJsonAsync<ServiceResponse<List<GetBlogPostDto>>>();
                 if (responseData == null)
