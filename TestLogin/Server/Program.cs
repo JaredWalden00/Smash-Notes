@@ -14,20 +14,41 @@ using TestLogin.Server.CharacterControlService;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var logger = LoggerFactory.Create(config =>
+{
+    config.AddConsole();
+}).CreateLogger("Program");
+
+// Add services to the container.
 builder.Services.AddSwaggerGen();
+var connection = String.Empty;
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddEnvironmentVariables().AddJsonFile("appsettings.Development.json");
+    connection = builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+}
+else
+{
+    connection = Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING");
+}
+
+// Create logger and log the connection string
+logger.LogInformation("Connection string: {ConnectionString}", connection);
+
 builder.Services.AddDbContext<DataContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(
+        connection));
 builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen(c => {
-	c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-	{
-		Description = "Standard Authorization header using the Bearer scheme, e.g. \"bearer {token} \"",
-		In = ParameterLocation.Header,
-		Name = "Authorization",
-		Type = SecuritySchemeType.ApiKey
-	});
+    c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    {
+        Description = "Standard Authorization header using the Bearer scheme, e.g. \"bearer {token} \"",
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
+    });
 
-	c.OperationFilter<SecurityRequirementsOperationFilter>();
+    c.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddRazorPages();
@@ -35,15 +56,15 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBlogControlService, BlogControlService>();
 builder.Services.AddScoped<ICharacterControlService, CharacterControlService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-	.AddJwtBearer(options => {
-		options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-		{
-			ValidateIssuerSigningKey = true,
-			IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value!)),
-			ValidateIssuer = false,
-			ValidateAudience = false
-		};
-	});
+    .AddJwtBearer(options => {
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value!)),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    });
 
 builder.Services.AddHttpContextAccessor();
 
@@ -67,7 +88,7 @@ app.UseBlazorFrameworkFiles();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-	c.SwaggerEndpoint("/swagger/v1/swagger.json", "Blazor API V1");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Blazor API V1");
 });
 app.UseStaticFiles();
 app.UseAuthentication();
