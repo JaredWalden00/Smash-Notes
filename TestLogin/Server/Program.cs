@@ -1,5 +1,6 @@
 global using TestLogin.Shared;
 global using Microsoft.EntityFrameworkCore;
+global using TestLogin.Server.Dto;
 global using AutoMapper;
 global using TestLogin.Server.BlogControlService;
 using Microsoft.AspNetCore.ResponseCompression;

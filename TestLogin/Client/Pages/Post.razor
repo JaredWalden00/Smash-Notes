@@ -5,13 +5,12 @@
 @inject ILocalStorageService LocalStorage
 @inject NavigationManager NavManager
 @using Markdig
-@using TestLogin.Shared.Dto.Blog
 
 <style>
     .form-group-container {
-        background-color: #f0f0f0;
-        padding: 10px;
-        border-radius: 5px;
+        background-color: #f0f0f0; /* Replace with your desired background color */
+        padding: 10px; /* Adjust padding as needed */
+        border-radius: 5px; /* Add border radius if desired */
     }
 
 </style>
@@ -22,6 +21,7 @@
 }
 else
 {
+
     @if (!EditRecord)
     {
         <div class="container-fluid">
@@ -72,40 +72,41 @@ else
     private GetBlogPostDto CurrentPost = new GetBlogPostDto();
 
     [Parameter]
-    public string? stringid { get; set; }
+    public string stringid { get; set; }
 
-    public bool EditRecord = false;
-
+    private List<Character> Characters = new List<Character>();
     private List<Character> ExistingCharacters = new List<Character>();
 
-    public List<int> ExistingCharacterIds { get; set; } = new List<int>();
+    public bool EditRecord = false;
+    [Parameter]
+    public List<int> NewCharacterIds { get; set; }
+
+    [Parameter]
+    public List<int> ExistingCharacterIds { get; set; }
+
+    string placeholderImage = "https://via.placeholder.com/1060x300";
 
     protected override async Task OnInitializedAsync()
     {
-        if (stringid != null)
+        int Id = int.Parse(stringid);
+        var response = await BlogService.GetBlogPostById(Id); //first error?
+        if (response.Success)
         {
-            int Id = int.Parse(stringid);
-            var response = await BlogService.GetBlogPostById(Id); //gets blogpost
-            if (response.Success)
-            {
-                if (response.Data != null)
-                {
-                    CurrentPost = response.Data;
-                }
-            }
-
-            var charlist = await CharacterService.GetBlogPostCharactersById(Id); //gets characters of the blogpost
-            if (charlist.Success)
-            {
-                if (charlist.Data != null)
-                {
-                    ExistingCharacters = charlist.Data; //used in line 42
-                }
-            }
+            CurrentPost = response.Data;
         }
-        else
+
+        var charlist = await CharacterService.GetBlogPostCharactersById(Id);
+        if (charlist.Success)
         {
-            //handle where stringid is null
+            ExistingCharacters = charlist.Data;
+        }
+
+        Characters = await CharacterService.GetAllCharacters();
+        ExistingCharacterIds = new List<int>();
+
+        foreach (var character in ExistingCharacters)
+        {
+            ExistingCharacterIds.Add(character.Id);
         }
     }
 }

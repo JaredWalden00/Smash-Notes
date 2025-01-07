@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TestLogin.Client.Services;
 using TestLogin.Server.Data;
-using TestLogin.Shared.Dto.User;
 
 namespace TestLogin.Server.Controllers
 {

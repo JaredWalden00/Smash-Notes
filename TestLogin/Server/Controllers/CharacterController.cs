@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TestLogin.Server.CharacterControlService;
 using TestLogin.Server.Data;
-using TestLogin.Shared.Dto.Blog;
 
 namespace TestLogin.Server.Controllers
 {

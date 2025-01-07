@@ -1,6 +1,4 @@
-﻿using TestLogin.Shared.Dto.Blog;
-
-namespace TestLogin.Client.Services.Char
+﻿namespace TestLogin.Client.Services.Char
 {
     interface ICharacterService
     {

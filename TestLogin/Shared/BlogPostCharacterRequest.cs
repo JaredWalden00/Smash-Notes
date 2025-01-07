@@ -9,6 +9,6 @@ namespace TestLogin.Shared
     public class BlogPostCharacterRequest
     {
         public int BlogId { get; set; }
-        public List<int>? CharacterIds { get; set; }
+        public List<int> CharacterIds { get; set; }
     }
 }

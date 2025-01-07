@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestLogin.Shared.Dto.User
+namespace TestLogin.Shared
 {
     public class UserLoginDto
     {
